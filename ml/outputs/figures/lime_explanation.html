@@ -37089,25 +37089,25 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_divR3FR7KHCOVZZ20S"></div>
+        <div class="lime top_div" id="top_div58LSWHSUKWFN1BL"></div>
         
         <script>
-        var top_div = d3.select('#top_divR3FR7KHCOVZZ20S').classed('lime top_div', true);
+        var top_div = d3.select('#top_div58LSWHSUKWFN1BL').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["Pure Fresh", "Good", "Stale to Spoiled"], [0.00031666175345890224, 0.00038026709808036685, 0.9993031024932861]);
+            var pp = new lime.PredictProba(pp_svg, ["Pure Fresh", "Good", "Stale to Spoiled"], [0.0, 0.0, 1.0]);
             
         
         var exp_div;
             var exp = new lime.Explanation(["Pure Fresh", "Good", "Stale to Spoiled"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["0.01 < MQ135_mean <= 0.01", 0.2820467975165893], ["92.33 < Humidity_mean <= 95.00", 0.13342781577969012], ["MQ2_mean > 2.55", 0.10944274708309583], ["8.06 < MQ3_over_MQ2_end <= 8.62", 0.03142647540778327], ["0.81 < MQ136_over_MQ138_end <= 0.84", 0.02937583394956573], ["MQ138_std <= 0.06", 0.026959120058109746], ["5.09 < MQ138_mean <= 6.20", 0.02329670280372858], ["-0.01 < MQ3_slope <= 0.03", -0.021337203107329526], ["-0.00 < MQ2_slope <= 0.01", 0.01855356105308066], ["30.66 < Temperature_mean <= 31.51", 0.016752783652224035]], 2, exp_div);
+                exp.show([["MQ138_mean <= 4.10", 0.0995992275809297], ["92.33 < Humidity_mean <= 95.00", 0.08945747658926612], ["MQ136_mean <= 3.69", 0.07242463812181088], ["MQ2_mean <= 2.15", -0.05369932022292395], ["MQ9_mean <= 0.32", -0.038238026389645144], ["MQ136_over_MQ138_end > 0.89", -0.031038472271757437], ["MQ135_mean > 0.01", -0.028482518321971073], ["MQ3_mean <= 19.00", 0.022820446673192742], ["-0.01 < MQ2_slope <= -0.00", -0.01618146686532376], ["MQ135_std > 0.00", -0.014073143978596919]], 2, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_tabular([["MQ135_mean", "0.01", 0.2820467975165893], ["Humidity_mean", "95.00", 0.13342781577969012], ["MQ2_mean", "2.84", 0.10944274708309583], ["MQ3_over_MQ2_end", "8.36", 0.03142647540778327], ["MQ136_over_MQ138_end", "0.82", 0.02937583394956573], ["MQ138_std", "0.02", 0.026959120058109746], ["MQ138_mean", "5.10", 0.02329670280372858], ["MQ3_slope", "0.01", -0.021337203107329526], ["MQ2_slope", "0.00", 0.01855356105308066], ["Temperature_mean", "31.21", 0.016752783652224035]], 2, raw_div);
+            exp.show_raw_tabular([["MQ138_mean", "3.66", 0.0995992275809297], ["Humidity_mean", "95.00", 0.08945747658926612], ["MQ136_mean", "3.50", 0.07242463812181088], ["MQ2_mean", "1.89", -0.05369932022292395], ["MQ9_mean", "0.28", -0.038238026389645144], ["MQ136_over_MQ138_end", "0.98", -0.031038472271757437], ["MQ135_mean", "0.01", -0.028482518321971073], ["MQ3_mean", "16.29", 0.022820446673192742], ["MQ2_slope", "-0.00", -0.01618146686532376], ["MQ135_std", "0.00", -0.014073143978596919]], 2, raw_div);
         
         </script>
         </body></html>

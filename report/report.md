@@ -94,155 +94,226 @@ under-performance on a small class. `random_state=42` is fixed everywhere
 it's supported, so the experiment is reproducible end-to-end via
 `ml/run_pipeline.py`.
 
-The model used for feature importance, LIME, and SHAP is **not hard-coded**:
-it is selected programmatically as the model with the best test F1-weighted
-score (tie-broken by test accuracy) — see `select_model_for_xai()` in
-`ml/src/feature_importance.py`.
+**Model selection.** Model selection was performed using the mean weighted
+F1-score obtained through 5-fold stratified cross-validation on the training
+data, with mean CV accuracy as a tie-breaker. The held-out test set was
+reserved for final evaluation. The pipeline enforces this order: CV runs for
+all three models, the selection is made from those scores alone, and only then
+is each model fit on the full training set and scored once on the test set
+(`ml/run_pipeline.py`; selection logic in `select_model_for_xai()`,
+`ml/src/feature_importance.py`; decision recorded in
+`ml/artifacts/model_selection.json` with `"test_set_used_for_selection":
+false`). The selected model is then used for feature importance, LIME, and
+SHAP. Nothing about the choice is hard-coded, and a regression test
+(`tests/test_model_selection.py`) checks that a model with a better CV score
+but a worse test score is still the one chosen.
 
 ## 4. Results and Discussion
+
+**Cross-validation results** (training set only, 5-fold stratified, mean ±
+std). These scores were used for model comparison during development and for
+model selection:
+
+| Model | CV F1-weighted | CV Accuracy |
+|---|---:|---:|
+| **Random Forest** | **0.9889 ± 0.0121** | **0.9888 ± 0.0123** |
+| SVM | 0.9750 ± 0.0195 | 0.9752 ± 0.0194 |
+| XGBoost | 0.9865 ± 0.0131 | 0.9865 ± 0.0131 |
+
+**Random Forest was selected for the explainability analysis based on its
+cross-validation performance** (highest mean CV weighted F1, 0.9889). Its
+final performance, and that of the other two models, was then evaluated on
+the held-out test set.
+
+**Final test results** (111 held-out samples, evaluated once after
+selection, for unbiased final evaluation only):
 
 | Model | Accuracy | Precision | Recall | F1-score | F1-macro |
 |---|---:|---:|---:|---:|---:|
 | Random Forest | 0.9910 | 0.9913 | 0.9910 | 0.9910 | 0.9919 |
 | SVM | 0.9820 | 0.9831 | 0.9820 | 0.9821 | 0.9839 |
-| XGBoost | **1.0000** | **1.0000** | **1.0000** | **1.0000** | **1.0000** |
-
-5-fold CV (training set only, mean ± std):
-
-| Model | CV Accuracy | CV F1-weighted |
-|---|---:|---:|
-| Random Forest | 0.9888 ± 0.0123 | 0.9889 ± 0.0121 |
-| SVM | 0.9752 ± 0.0194 | 0.9750 ± 0.0195 |
-| XGBoost | 0.9865 ± 0.0131 | 0.9865 ± 0.0131 |
+| XGBoost | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
 
 ![Model comparison](../ml/outputs/figures/model_comparison.png)
 
 ![Confusion matrices](../ml/outputs/figures/confusion_matrices.png)
 
-All three models perform very well, and CV scores track test scores closely
-(no evidence of leakage or overfitting to the test set). **XGBoost reached
-100% accuracy on the 111-sample test set** — every sample correctly
-classified. Random Forest's only error was one `Stale to Spoiled` sample
-predicted as `Good`; SVM misclassified two `Stale to Spoiled` samples as
-`Good`. No model confused `Pure Fresh` with either other class, suggesting
-the sensor signatures for freshly-harvested tomatoes are cleanly separable
-from the other two states in this dataset.
+All three models score highly, and CV scores track test scores closely.
+XGBoost classified every one of the 111 test samples correctly, even though
+its CV score was slightly below Random Forest's. The gap between them (0.9865
+vs 0.9889 CV F1) is smaller than either model's CV standard deviation, so the
+two are statistically hard to tell apart on this data. The test result does
+not change the selection, because the test set is not a selection input.
+Random Forest's only test error was one `Stale to Spoiled` sample predicted
+as `Good`. SVM made two errors of the same kind. No model confused
+`Pure Fresh` with either other class.
 
-The near-perfect scores across all three models — not just the selected one
-— indicate the 26 engineered sensor statistics carry a very strong signal
-for this task, more than model choice. A caveat worth stating plainly: with
-only 111 test samples (and just 14 `Pure Fresh` examples), a handful of
-different samples could change these numbers meaningfully; the CV standard
-deviations (up to ~2 points of accuracy) give a more honest sense of
-variance than the single test-set number alone.
+**Investigating the very high scores.** The 100% XGBoost result was
+investigated, not adjusted. The dataset has no tomato, recording, session,
+batch, or sequence identifier: its 27 columns are the target plus 26 sensor
+statistics. The row order does show structure, though. The rows form exactly
+four contiguous blocks, one per original label (rows 0–68 Pure Fresh, 69–212
+Good, 213–338 Stale, 339–554 Spoiled). Consecutive rows within a block are
+much closer to each other than random rows of the same class: the mean
+Euclidean distance over standardized features is 2.41 for neighbours vs 6.11
+for random same-class pairs, about 2.5× apart. This fits the file name
+(`window_statistical_features`): rows may be overlapping or adjacent time
+windows cut from continuous sensor recordings. If so, a random split can put
+near-identical neighbouring windows in both train and test, which would
+inflate the scores. There is no identifier to group on, and making up groups
+from row order would be guesswork, so the stratified random split and
+stratified CV were kept. This is recorded as a limitation (Section 8), not as
+confirmed leakage.
+
+Also worth noting: there are only 111 test samples (14 of them `Pure Fresh`),
+so a few different samples could shift these numbers noticeably. The CV
+standard deviations (up to about 2 points of accuracy) give a better sense of
+the variance than the single test-set figure.
 
 ## 5. Feature Importance
 
-Model used: **XGBoost** (selected per Section 3's criterion).
+Model used: **Random Forest** (selected by CV, see Section 3). Method: native
+impurity-based `feature_importances_`, as saved in
+`ml/artifacts/feature_importance.json`.
 
 ![Feature importance](../ml/outputs/figures/feature_importance.png)
 
-The top-ranked features are dominated by MQ gas sensor **means**
-(`MQ3_over_MQ2_end`, `MQ135_mean`, `MQ138_mean`, `MQ9_mean`) and one
-environmental mean (`Humidity_mean`), with sensor `slope` and `std` features
-contributing comparatively less. This is consistent with a plausible
-underlying process: mean gas concentration over the observation window
-should shift substantially as volatile organic compounds change with
-spoilage, while slope/variability features add finer, secondary detail. The
-MQ3/MQ2 ratio ranking highest also fits — MQ3 (ethanol) and MQ2
-(combustible/gas mix) both respond to fermentation byproducts, and their
-ratio may normalize away some sensor-drift noise that raw means don't.
+| Rank | Feature | Importance |
+|---:|---|---:|
+| 1 | MQ135_mean | 0.1635 |
+| 2 | MQ138_mean | 0.1285 |
+| 3 | MQ136_over_MQ138_end | 0.1207 |
+| 4 | MQ3_over_MQ2_end | 0.1061 |
+| 5 | MQ136_mean | 0.0947 |
+| 6 | Humidity_mean | 0.0673 |
+| 7 | MQ3_mean | 0.0580 |
+| 8 | MQ2_mean | 0.0572 |
+| 9 | MQ9_mean | 0.0525 |
+| 10 | Humidity_std | 0.0228 |
 
-**Feature importance indicates predictive contribution, not causation** —
-these results say the model relies on these features to separate classes,
-not that any one gas *causes* spoilage.
+The ranking is led by gas-sensor **means** (MQ135, MQ138, MQ136) and the two
+**ratio** features, followed by mean humidity. The `std` and `slope` features
+rank lower. This is consistent with average gas concentration over a window
+shifting as volatile compounds change with ripening and spoilage, while
+within-window variability adds less. The high rank of both ratio features
+suggests that relative sensor responses are informative, possibly because a
+ratio cancels some shared drift between sensors.
+
+**Feature importance indicates predictive contribution, not causation.** It
+shows which features the model relies on to separate the classes. It does not
+show that any gas causes spoilage.
 
 ## 6. LIME Analysis
 
-A correctly-classified, high-confidence test sample was selected (test
-index #42) so the explanation is easy to discuss:
+LIME explains one individual test prediction from the CV-selected Random
+Forest. The sample was chosen only for explanation, as a correctly classified
+and confident prediction. Choosing it did not affect the model in any way.
 
+- **Sample:** test index #6
 - **Actual class:** Stale to Spoiled
 - **Predicted class:** Stale to Spoiled
-- **Probabilities:** Pure Fresh 0.03%, Good 0.04%, Stale to Spoiled 99.93%
+- **Probabilities:** Pure Fresh 0.00, Good 0.00, Stale to Spoiled 1.00
 
 ![LIME explanation](../ml/outputs/figures/lime_explanation.png)
 
-The features pushing the prediction toward `Stale to Spoiled` are led by a
-low `MQ135_mean` value, a high `Humidity_mean` (92–95%), and an elevated
-`MQ2_mean`; `MQ3_slope` was the one feature pulling weakly against this
-class. LIME is a **local approximation** around this one sample — it
-explains why the model classified *this specific tomato reading* as it did,
-not a general rule the model applies to every prediction.
+Features that pushed this prediction **toward** `Stale to Spoiled`:
+`MQ138_mean <= 4.10` (+0.100), `92.33 < Humidity_mean <= 95.00` (+0.090),
+`MQ136_mean <= 3.69` (+0.072), and `MQ3_mean <= 19.00` (+0.023). Features
+that pushed **against** it: `MQ2_mean <= 2.15` (−0.054), `MQ9_mean <= 0.32`
+(−0.038), `MQ136_over_MQ138_end > 0.89` (−0.031), and `MQ135_mean > 0.01`
+(−0.029). The prediction still ends at probability 1.0 because the supporting
+evidence outweighs the opposing evidence.
+
+LIME is a **local explanation**. It fits a simple surrogate model around this
+one sample, so it explains why the model classified this particular reading
+as it did. It is not a global description of how the model behaves.
 
 ## 7. SHAP Analysis
 
-The same XGBoost model and the same test sample (#42) are used for SHAP so
-LIME and SHAP can be compared directly.
+SHAP was applied to the same CV-selected Random Forest using
+`shap.TreeExplainer`. For this sklearn Random Forest, SHAP values are in class
+**probability** units.
 
-**Global SHAP feature importance** (mean |SHAP value| across all test
-samples and all three classes):
+**Global SHAP feature importance** (mean |SHAP value| over all test samples
+and all three classes):
 
 ![SHAP global bar](../ml/outputs/figures/shap_bar.png)
 
-This global ranking — led by `MQ135_mean`, `MQ138_mean`,
-`MQ136_over_MQ138_end`, `Humidity_mean`, `MQ9_mean` — broadly agrees with
-the XGBoost `feature_importances_` ranking in Section 5, which is reassuring
-since the two methods measure importance differently (impurity-based
-splits vs. game-theoretic attribution).
+The global SHAP ranking is `MQ135_mean` (0.082), `MQ138_mean` (0.078),
+`MQ136_over_MQ138_end` (0.056), `MQ136_mean` (0.052), `MQ3_over_MQ2_end`
+(0.050), `Humidity_mean` (0.046). Its top six features are the same six as
+the Random Forest `feature_importances_` ranking in Section 5, in nearly the
+same order. That agreement is a useful check, because the two methods measure
+importance in different ways (impurity reduction vs. Shapley attribution).
 
 **SHAP summary (beeswarm) for the `Stale to Spoiled` class:**
 
 ![SHAP summary](../ml/outputs/figures/shap_summary.png)
 
-This adds direction: low `MQ135_mean` (blue, left) and high `Humidity_mean`
-(red, right) both push toward `Stale to Spoiled`, matching the local
-explanation below.
+This plot adds direction: it shows, for each feature, whether high or low
+values push predictions toward or away from `Stale to Spoiled`, and how
+widely that effect varies across samples.
 
-**Local explanation for the same sample used by LIME:**
+**Local explanation for the same sample used by LIME (#6):**
 
 ![SHAP local](../ml/outputs/figures/shap_local.png)
 
-SHAP's waterfall for sample #42 names the same top three drivers LIME found
-— `MQ135_mean`, `MQ138_mean`, `Humidity_mean` — moving the prediction from
-the baseline `E[f(X)] = 0.852` up to `f(x) = 4.42` for the `Stale to
-Spoiled` class logit. The agreement between two independently-implemented
-methods (a local surrogate model vs. exact game-theoretic attribution for
-trees) is a useful sanity check that the explanation reflects genuine model
-behavior rather than an artifact of one method.
+SHAP moves this sample from the baseline `E[f(X)] = 0.334` (the average
+`Stale to Spoiled` probability) to `f(x) = 1.0`. The largest contributions are
+`MQ135_mean` (+0.155), `Humidity_mean` (+0.132), `MQ3_mean` (+0.106),
+`MQ3_over_MQ2_end` (+0.086), `MQ138_mean` (+0.080), and `MQ136_mean`
+(+0.066).
 
-As with feature importance: SHAP describes how features **moved this
-prediction away from the model's baseline**, not that those gas readings
-*caused* the tomato to spoil.
+**LIME vs SHAP on sample #6.** Both methods rank `Humidity_mean`,
+`MQ138_mean`, and `MQ136_mean` among the main drivers toward
+`Stale to Spoiled`. They disagree on `MQ135_mean`: SHAP gives it the largest
+positive contribution, while LIME gives it a small negative weight. This kind
+of disagreement is expected. LIME assigns weights to discretized value ranges
+using a surrogate fit on perturbed samples, while TreeExplainer computes exact
+attributions from the trees themselves. SHAP's local attributions are the
+more faithful of the two for tree models. The disagreement is a reminder not
+to over-read any single local explanation.
+
+As with feature importance, SHAP describes how features **moved this
+prediction away from the model's baseline**. It does not show that those gas
+readings caused the tomato to spoil.
 
 ## 8. Conclusion
 
-All three classifiers — Random Forest, SVM, and XGBoost — perform strongly
-on this task (98–100% test accuracy), with XGBoost slightly ahead and
-selected as the model used for explainability. The 26 sensor-derived
-statistics, particularly MQ135/MQ138/MQ9 means, the MQ3/MQ2 ratio, and mean
-humidity, carry a strong signal for distinguishing Pure Fresh, Good, and
-Stale-to-Spoiled tomatoes. Feature importance, LIME, and SHAP converge on a
-consistent, plausible story about which sensor signals drive predictions,
-and LIME/SHAP agree closely on an individual example — evidence the
-explanations are capturing real model behavior rather than noise.
+All three classifiers perform strongly (98–100% test accuracy). **Random
+Forest was selected for the explainability analysis based on its
+cross-validation performance** (mean CV weighted F1 0.9889, ahead of XGBoost
+at 0.9865 and SVM at 0.9750). On the held-out test set it reached 99.1%
+accuracy, and XGBoost reached 100%. The held-out test set was used only for
+this final evaluation. The most predictive signals are the MQ135, MQ138, and
+MQ136 gas-sensor means, the MQ136/MQ138 and MQ3/MQ2 ratios, and mean
+humidity. Feature importance and global SHAP agree closely on this ranking.
+LIME and SHAP agree on some local drivers and differ on others, which shows
+why local explanations should be read with care.
 
 **Limitations:**
-- The dataset is modest (555 samples, 111 in the test set) and imbalanced
-  (only 69 `Pure Fresh` examples); near-perfect test scores should be read
-  alongside the wider CV standard deviations, not as a guarantee of this
-  performance on new data or other tomato batches/sensor rigs.
-- Feature importance and SHAP indicate association/predictive contribution,
+- **Possible correlated windows.** The dataset does not provide an explicit
+  tomato, recording, or session identifier, so a group-aware split could not
+  be performed. If multiple rows come from the same underlying recording,
+  random splitting may put correlated samples in both the training and test
+  sets. The row order suggests this is plausible: rows are grouped in one
+  contiguous block per label, and neighbouring rows are about 2.5× more
+  similar than random same-class pairs. It is not proven, and the reported
+  scores may be optimistic if it is true.
+- The dataset is small (555 samples, 111 in the test set) and imbalanced
+  (69 `Pure Fresh`), so the near-perfect test scores should be read alongside
+  the CV standard deviations.
+- Feature importance and SHAP show association and predictive contribution,
   not causal mechanisms of spoilage.
-- No hyperparameter tuning was performed, by design (project scope/time
-  constraint) — reported numbers reflect the architecture's specified
-  configurations, not an optimized ceiling.
+- No hyperparameter tuning was done, by design. The numbers reflect the
+  configurations specified in the architecture.
 
-**Possible future improvements:** collect more samples (especially more
-`Pure Fresh` examples) and, ideally, from additional sensor units/batches to
-test generalization; add light hyperparameter tuning within CV; and extend
-XAI coverage to more individual samples/misclassified cases to see whether
-the same features drive the model's mistakes.
+**Possible future improvements:** record a tomato or recording identifier with
+each window so that `StratifiedGroupKFold` and a group-aware test split can
+be used. This is the most important step for confirming whether these scores
+generalize. Other steps: collect more `Pure Fresh` samples and data from
+additional sensor units or batches, add light hyperparameter tuning inside CV,
+and extend the XAI analysis to misclassified samples.
 
 ---
 *All figures and numbers in this report are generated by

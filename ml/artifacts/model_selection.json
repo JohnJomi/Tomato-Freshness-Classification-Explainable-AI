@@ -1,0 +1,29 @@
+{
+  "xai_selected_model": "Random Forest",
+  "selection_metric": "cv_f1_weighted_mean",
+  "selection_value": 0.9889024965756942,
+  "tie_breaker_metric": "cv_accuracy_mean",
+  "tie_breaker_value": 0.9887640449438202,
+  "selection_data": "training set only, 5-fold StratifiedKFold(shuffle=True, random_state=42)",
+  "test_set_used_for_selection": false,
+  "candidates": {
+    "Random Forest": {
+      "cv_f1_weighted_mean": 0.9889024965756942,
+      "cv_f1_weighted_std": 0.012105384987543941,
+      "cv_accuracy_mean": 0.9887640449438202,
+      "cv_accuracy_std": 0.012308372078767766
+    },
+    "SVM": {
+      "cv_f1_weighted_mean": 0.9750246792826598,
+      "cv_f1_weighted_std": 0.019497944621395896,
+      "cv_accuracy_mean": 0.9752042900919307,
+      "cv_accuracy_std": 0.01936726368981284
+    },
+    "XGBoost": {
+      "cv_f1_weighted_mean": 0.9864947048144768,
+      "cv_f1_weighted_std": 0.013068536252748892,
+      "cv_accuracy_mean": 0.986491317671093,
+      "cv_accuracy_std": 0.013098982085694483
+    }
+  }
+}

@@ -6,7 +6,7 @@ Spoiled**. Trains and compares three classifiers (Random Forest, SVM, XGBoost),
 evaluates them with standard classification metrics, and explains predictions
 with feature importance, LIME, and SHAP.
 
-See `architecture-2.md` for the full architecture spec.
+See `architecture.md` for the full architecture spec.
 
 ## Project layout
 
@@ -19,6 +19,7 @@ ml/outputs/figures/     generated plots
 ml/outputs/results/     generated metrics/reports
 ml/artifacts/           saved trained models + preprocessing artifacts (joblib/json)
 report/                 final written report
+tests/                  pytest regression tests (e.g. CV-only model selection)
 ```
 
 ## Setup
@@ -32,6 +33,13 @@ pip install -r requirements.txt
 > **macOS only:** XGBoost requires the OpenMP runtime, which isn't bundled.
 > Install it once with `brew install libomp` (needed for `import xgboost` to
 > succeed on Apple Silicon/Intel Macs). Not required on Linux/Windows.
+
+## Run the tests
+
+```bash
+source .venv/bin/activate
+python -m pytest
+```
 
 ## Run the full pipeline
 

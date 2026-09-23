@@ -45,5 +45,6 @@
     "Good": 144,
     "Stale to Spoiled": 342
   },
-  "xai_model": "XGBoost"
+  "xai_model": "Random Forest",
+  "xai_selection_metric": "cv_f1_weighted_mean"
 }

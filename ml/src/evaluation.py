@@ -81,33 +81,44 @@ def evaluate_on_test(
     }
 
 
-def evaluate_all_models(
+def cross_validate_all(
+    models: dict[str, Pipeline], X_train: pd.DataFrame, y_train: pd.Series, cv
+) -> dict[str, dict[str, float]]:
+    """Stage 1: stratified k-fold CV for every model, on the training set only.
+    These scores are the only input to model selection."""
+    cv_results: dict[str, dict[str, float]] = {}
+    for name, pipeline in models.items():
+        cv_scores = cross_validate_model(pipeline, X_train, y_train, cv)
+        print(
+            f"{name:<14} CV F1-weighted: {cv_scores['cv_f1_weighted_mean']:.4f} "
+            f"(+/- {cv_scores['cv_f1_weighted_std']:.4f}) | "
+            f"CV accuracy: {cv_scores['cv_accuracy_mean']:.4f} "
+            f"(+/- {cv_scores['cv_accuracy_std']:.4f})"
+        )
+        cv_results[name] = cv_scores
+    return cv_results
+
+
+def evaluate_all_on_test(
     models: dict[str, Pipeline],
     X_train: pd.DataFrame,
     y_train: pd.Series,
     X_test: pd.DataFrame,
     y_test: pd.Series,
-    cv,
 ) -> dict[str, dict[str, Any]]:
-    """Cross-validate then fit/test each model. Never touches the test set for model selection."""
-    results: dict[str, dict[str, Any]] = {}
+    """Stage 2 (after model selection): fit each model on the full training set
+    and evaluate it once on the held-out test set. Final reporting only."""
+    test_results: dict[str, dict[str, Any]] = {}
     for name, pipeline in models.items():
-        print(f"\n--- Evaluating {name} ---")
-        cv_scores = cross_validate_model(pipeline, X_train, y_train, cv)
+        print(f"\n--- Final test evaluation: {name} ---")
         test_result = evaluate_on_test(pipeline, X_train, y_train, X_test, y_test)
-
-        print(
-            f"CV accuracy: {cv_scores['cv_accuracy_mean']:.4f} "
-            f"(+/- {cv_scores['cv_accuracy_std']:.4f})"
-        )
         print(
             f"Test accuracy: {test_result['metrics']['test_accuracy']:.4f} | "
             f"Test F1 (weighted): {test_result['metrics']['test_f1_weighted']:.4f}"
         )
         print(test_result["classification_report"])
-
-        results[name] = {**cv_scores, **test_result}
-    return results
+        test_results[name] = test_result
+    return test_results
 
 
 def build_results_table(results: dict[str, dict[str, Any]]) -> pd.DataFrame:

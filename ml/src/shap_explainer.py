@@ -21,19 +21,35 @@ def _transform(fitted_pipeline, X: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(transformed, columns=FEATURE_COLUMNS, index=X.index)
 
 
-def build_explanation(fitted_pipeline, X_eval: pd.DataFrame):
-    """TreeExplainer on the fitted model, returning a shap.Explanation for X_eval."""
-    model = fitted_pipeline.named_steps["model"]
-    X_eval_t = _transform(fitted_pipeline, X_eval)
+def build_explanation(
+    fitted_pipeline, X_eval: pd.DataFrame, X_background: pd.DataFrame | None = None
+):
+    """Return a shap.Explanation (samples x features x classes) for X_eval.
 
-    # tree_path_dependent perturbation doesn't need a background dataset and
-    # avoids XGBoost's "categorical split not supported" error under the
-    # (default) interventional perturbation mode.
-    explainer = shap.TreeExplainer(
-        model, feature_names=FEATURE_COLUMNS, feature_perturbation="tree_path_dependent"
+    Tree-based models use TreeExplainer on the model step, with the pipeline's
+    preprocessing applied first. Other models (e.g. SVM) use a model-agnostic
+    explainer over the full pipeline's predict_proba, with a training-set
+    background sample.
+    """
+    model = fitted_pipeline.named_steps["model"]
+
+    if hasattr(model, "feature_importances_"):
+        X_eval_t = _transform(fitted_pipeline, X_eval)
+        # tree_path_dependent perturbation doesn't need a background dataset and
+        # avoids XGBoost's "categorical split not supported" error under the
+        # (default) interventional perturbation mode.
+        explainer = shap.TreeExplainer(
+            model, feature_names=FEATURE_COLUMNS, feature_perturbation="tree_path_dependent"
+        )
+        return explainer(X_eval_t), X_eval_t
+
+    if X_background is None:
+        raise ValueError("Non-tree models need X_background (training data) for SHAP.")
+    masker = shap.maskers.Independent(X_background, max_samples=100)
+    explainer = shap.Explainer(
+        fitted_pipeline.predict_proba, masker, feature_names=FEATURE_COLUMNS, seed=42
     )
-    explanation = explainer(X_eval_t)
-    return explanation, X_eval_t
+    return explainer(X_eval), X_eval
 
 
 def plot_global_bar(explanation, output_path: str | Path, top_n: int = 15) -> None:

@@ -73,8 +73,10 @@ The system must train and compare three classification models, evaluate them usi
                                  ▼
                     ┌──────────────────────────┐
                     │ Select Model for XAI      │
-                    │ Based on evaluation      │
-                    │ (do not hard-code winner) │
+                    │ By mean 5-fold CV F1      │
+                    │ (training set only; never │
+                    │  test metrics; not hard-  │
+                    │  coded)                   │
                     └────────────┬─────────────┘
                                  │
                   ┌──────────────┴──────────────┐
@@ -370,7 +372,7 @@ XGBClassifier(
 )
 ```
 
-If XGBoost is unavailable in the environment, use a clearly documented fallback such as `GradientBoostingClassifier`.
+XGBoost is a required dependency. If it cannot be imported, the pipeline fails with an installation message (`pip install xgboost`; on macOS also `brew install libomp`). It is never silently replaced by another algorithm.
 
 Do not spend significant project time tuning hyperparameters. The goal is a complete, reproducible comparison rather than an exhaustive optimization study.
 
@@ -401,6 +403,21 @@ average="weighted"
 ```
 
 Also generate a classification report containing per-class precision, recall, and F1.
+
+## Model Selection
+
+Model selection (including which model is used for feature importance, LIME, and SHAP) uses **training-set cross-validation only**:
+
+1. Highest mean 5-fold CV weighted F1
+2. Highest mean 5-fold CV accuracy as tie-breaker
+
+Test-set metrics must never influence model selection, XAI model selection, or any other development decision. The order is:
+
+```text
+5-fold stratified CV (train) → select model → fit on full train → evaluate once on test → XAI
+```
+
+The decision is recorded in `artifacts/model_selection.json` (`selection_metric`, `selection_value`, candidates' CV scores, `test_set_used_for_selection: false`).
 
 ## Results Table
 
@@ -469,7 +486,7 @@ across the three models.
 
 # 10. Feature Importance
 
-Use the selected tree-based model, preferably Random Forest or XGBoost.
+Use the model selected by cross-validation (Section 8, "Model Selection"). Tree-based models use `feature_importances_`; a non-tree model (SVM) uses permutation importance computed on the training set.
 
 Primary implementation:
 
@@ -576,15 +593,9 @@ Explain:
 
 Use SHAP to explain model predictions.
 
-Preferred model:
+Model: the model selected by cross-validation (Section 8, "Model Selection").
 
-```text
-XGBoost
-```
-
-If XGBoost is unavailable, use a tree-based model such as Random Forest.
-
-For XGBoost:
+For tree-based models (Random Forest, XGBoost):
 
 ```text
 shap.TreeExplainer(model)
@@ -840,6 +851,7 @@ Generate confusion matrices
   │
   ▼
 Select model for XAI
+(by CV weighted F1 only)
   │
   ├──────────────┐
   ▼              ▼
