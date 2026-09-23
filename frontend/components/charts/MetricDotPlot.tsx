@@ -61,7 +61,7 @@ export function MetricDotPlot({ models }: { models: ModelMetrics[] }) {
                         style={{ background: MODEL_COLORS[m.name], boxShadow: "0 0 0 2px var(--surface)" }}
                       />
                       {hover === id && (
-                        <span className="pointer-events-none absolute bottom-full mb-1 whitespace-nowrap rounded-md border border-line bg-page px-2 py-1 text-left text-[11px] shadow-lg">
+                        <span className="pointer-events-none absolute bottom-full mb-1 whitespace-nowrap rounded-control border border-line bg-page px-2 py-1 text-left text-[11px] shadow-lg">
                           <strong className="block text-sm text-ink tabular">{pct(v, 2)}</strong>
                           <span className="text-ink-2">{m.name} · {metric.label}</span>
                         </span>

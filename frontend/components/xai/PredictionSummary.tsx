@@ -14,11 +14,11 @@ export function PredictionSummary({
   const correct = actual === predicted;
   return (
     <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <div className="rounded-lg border border-line bg-surface-2 p-3">
+      <div className="rounded-control border border-line bg-surface-2 p-3">
         <dt className="text-xs text-muted">Actual class</dt>
         <dd className="mt-0.5 font-medium text-ink">{actual ?? "Unknown (custom input)"}</dd>
       </div>
-      <div className="rounded-lg border border-line bg-surface-2 p-3">
+      <div className="rounded-control border border-line bg-surface-2 p-3">
         <dt className="text-xs text-muted">Predicted class</dt>
         <dd className="mt-0.5 flex items-center gap-1.5 font-medium text-ink">
           {predicted}
@@ -34,7 +34,7 @@ export function PredictionSummary({
             ))}
         </dd>
       </div>
-      <div className="rounded-lg border border-line bg-surface-2 p-3">
+      <div className="rounded-control border border-line bg-surface-2 p-3">
         <dt className="text-xs text-muted">Confidence</dt>
         <dd className="mt-0.5 font-medium text-ink tabular">{pct(confidence)}</dd>
       </div>

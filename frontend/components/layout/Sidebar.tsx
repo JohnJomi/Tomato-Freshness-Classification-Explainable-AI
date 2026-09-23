@@ -30,10 +30,10 @@ const NAV = [
 function Brand() {
   return (
     <Link href="/" className="flex items-center gap-2 px-2 text-ink">
-      <span className="grid size-7 place-items-center rounded-md bg-surface-2 text-base" aria-hidden>
+      <span className="grid size-7 place-items-center rounded-control bg-primary-soft text-base" aria-hidden>
         🍅
       </span>
-      <span className="font-semibold tracking-tight">TomatoAI</span>
+      <span className="font-semibold tracking-tight text-primary-dark">TomatoAI</span>
     </Link>
   );
 }
@@ -51,10 +51,13 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-              active ? "bg-surface-2 text-ink font-medium" : "text-ink-2 hover:bg-surface-2/60 hover:text-ink",
+              "relative flex items-center gap-3 rounded-control px-3 py-2 text-sm transition-colors duration-150 ease-out",
+              active ? "bg-nav-active-bg font-semibold text-nav-active-text" : "text-ink-2 hover:bg-nav-hover hover:text-primary",
             )}
           >
+            {active && (
+              <span className="absolute inset-y-1 left-0 w-[3px] rounded-full bg-primary" aria-hidden />
+            )}
             <Icon className="size-4" aria-hidden />
             {label}
           </Link>
@@ -94,7 +97,7 @@ export function Sidebar() {
         <Brand />
         <button
           onClick={() => setOpen(true)}
-          className="rounded-md p-2 text-ink-2 hover:bg-surface-2 hover:text-ink"
+          className="rounded-control p-2 text-ink-2 hover:bg-surface-2 hover:text-ink"
           aria-label="Open navigation"
           aria-expanded={open}
         >
@@ -107,7 +110,7 @@ export function Sidebar() {
           <aside className="absolute inset-y-0 left-0 flex w-64 flex-col gap-6 border-r border-line bg-surface p-4 animate-fade-in">
             <div className="flex items-center justify-between">
               <Brand />
-              <button onClick={() => setOpen(false)} className="rounded-md p-2 text-ink-2 hover:bg-surface-2" aria-label="Close navigation">
+              <button onClick={() => setOpen(false)} className="rounded-control p-2 text-ink-2 hover:bg-surface-2" aria-label="Close navigation">
                 <X className="size-5" />
               </button>
             </div>

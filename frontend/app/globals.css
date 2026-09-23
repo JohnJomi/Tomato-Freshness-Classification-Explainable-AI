@@ -1,31 +1,65 @@
 @import "tailwindcss";
 
-/* Dark-first dashboard. Chart/ink/series values come from the validated
-   reference data-viz palette (dark steps); series slots 1-3 pass all-pairs
-   CVD checks on the #1a1a19 surface. */
+/* Light, green-on-white analytics theme per design.md. Categorical/sequential
+   chart values are still validated against the dataviz skill's CVD/contrast
+   gates for the #FFFFFF chart surface (see PR notes) — restrained green
+   identity, not a rainbow. */
 :root {
-  color-scheme: dark;
-  --page: #0d0d0d;
-  --surface: #1a1a19;
-  --surface-2: #232321;
-  --border: rgba(255, 255, 255, 0.1);
-  --text: #ffffff;
-  --text-2: #c3c2b7;
-  --muted: #898781;
-  --grid: #2c2c2a;
-  --axis: #383835;
+  color-scheme: light;
+  --page: #f5f7f5;
+  --surface: #ffffff;
+  --surface-2: #f8faf9;
+  --border: #e5e7eb;
+  --text: #111827;
+  --text-2: #6b7280;
+  --muted: #9ca3af;
+  --grid: #e5e7eb;
+  --axis: #d1d5db;
 
-  /* categorical: one slot per model, fixed order */
-  --series-1: #3987e5; /* Random Forest */
-  --series-2: #d95926; /* SVM */
-  --series-3: #199e70; /* XGBoost */
+  /* brand */
+  --primary: #047857;
+  --primary-dark: #064e3b;
+  --primary-soft: #d1fae5;
+  --nav-hover: #f0fdf4;
+  --nav-active-bg: #e8f5ef;
+  --nav-active-text: #064e3b;
+
+  /* categorical: one slot per model, fixed order. Two greens + a neutral
+     slate (three same-hue greens fail the CVD/normal-vision distinguishability
+     gate; this combination passes it while staying within the restrained
+     green + neutral-ink identity the design calls for). */
+  --series-1: #047857; /* Random Forest */
+  --series-2: #10b981; /* SVM */
+  --series-3: #374151; /* XGBoost */
 
   /* diverging: contribution sign */
-  --pos: #e66767; /* pushes toward the explained class */
-  --neg: #3987e5; /* pushes away from it */
+  --pos: #16a34a; /* supports the explained class */
+  --neg: #dc2626; /* opposes it */
 
-  --good: #0ca30c;
-  --critical: #d03b3b;
+  /* sequential ramps (4 steps each, validated: monotone lightness, light end
+     clears 2:1 contrast on white). Green = magnitude tied to the model
+     (confusion matrices). Blue = a second encoding on the same SHAP page
+     (feature value in the beeswarm), kept a different hue from the
+     support/oppose green/red so the two encodings don't read as one. */
+  --seq-green-1: #10b981;
+  --seq-green-2: #059669;
+  --seq-green-3: #047857;
+  --seq-green-4: #064e3b;
+  --seq-blue-1: #60a5fa;
+  --seq-blue-2: #3b82f6;
+  --seq-blue-3: #1d4ed8;
+  --seq-blue-4: #1e3a8a;
+
+  --good: #16a34a;
+  --warning: #d97706;
+  --critical: #dc2626;
+  --info: #2563eb;
+
+  --radius-control: 12px;
+  --radius-card: 20px;
+  --radius-panel: 24px;
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 @theme inline {
@@ -37,14 +71,29 @@
   --color-ink-2: var(--text-2);
   --color-muted: var(--muted);
   --color-grid: var(--grid);
+
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-soft: var(--primary-soft);
+  --color-nav-hover: var(--nav-hover);
+  --color-nav-active-bg: var(--nav-active-bg);
+  --color-nav-active-text: var(--nav-active-text);
+
   --color-series-1: var(--series-1);
   --color-series-2: var(--series-2);
   --color-series-3: var(--series-3);
   --color-pos: var(--pos);
   --color-neg: var(--neg);
   --color-good: var(--good);
+  --color-warning: var(--warning);
   --color-critical: var(--critical);
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-info: var(--info);
+
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --radius-panel: var(--radius-panel);
+
+  --font-sans: var(--font-sans);
 }
 
 body {
@@ -62,7 +111,7 @@ body {
   to { opacity: 1; transform: none; }
 }
 .animate-fade-in {
-  animation: fade-in 180ms ease-out both;
+  animation: fade-in 200ms ease-out both;
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in { animation: none; }

@@ -1,7 +1,8 @@
 import { CLASS_ORDER } from "@/lib/utils";
 
-// Sequential single-hue blue ramp (reference palette), dark-surface steps.
-const RAMP = ["#1a2433", "#104281", "#1c5cab", "#2a78d6", "#5598e7", "#86b6ef"];
+// Sequential single-hue green ramp, dark->light (validated: monotone lightness,
+// light end clears 2:1 contrast on the white card surface).
+const RAMP = ["#064e3b", "#047857", "#059669", "#10b981"];
 
 function cellColor(t: number) {
   return RAMP[Math.min(RAMP.length - 1, Math.round(t * (RAMP.length - 1)))];
@@ -30,7 +31,10 @@ export function ConfusionMatrix({ name, matrix, accent }: { name: string; matrix
                 <span
                   key={j}
                   className="grid h-12 place-items-center rounded-[4px] text-sm font-semibold tabular"
-                  style={{ background: v ? cellColor(t) : "var(--surface-2)", color: t > 0.6 ? "#0b0b0b" : "#ffffff" }}
+                  style={{
+                    background: v ? cellColor(t) : "var(--surface-2)",
+                    color: !v ? "var(--muted)" : t > 0.6 ? "#0b0b0b" : "#ffffff",
+                  }}
                   title={`Actual ${CLASS_ORDER[i]}, predicted ${CLASS_ORDER[j]}: ${v}`}
                 >
                   {v}

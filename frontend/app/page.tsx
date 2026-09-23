@@ -59,7 +59,7 @@ export default function Dashboard() {
                     ["F1-score", selected.f1],
                   ] as const
                 ).map(([label, v]) => (
-                  <div key={label} className="rounded-lg border border-line bg-surface-2 p-3">
+                  <div key={label} className="rounded-control border border-line bg-surface-2 p-3">
                     <p className="text-xs text-muted">{label}</p>
                     <p className="mt-0.5 text-xl font-semibold text-ink tabular">{pct(v)}</p>
                   </div>
@@ -83,7 +83,7 @@ export default function Dashboard() {
                 ["Selection", "Model chosen by CV weighted F1 only — the test set stays locked until final evaluation."],
                 ["Explainability", "Feature importance and SHAP (global), LIME and SHAP (local) on the selected model."],
               ].map(([t, d], i) => (
-                <li key={t} className="rounded-lg border border-line bg-surface-2 p-3">
+                <li key={t} className="rounded-control border border-line bg-surface-2 p-3">
                   <p className="text-xs font-medium text-muted">{i + 1}. {t}</p>
                   <p className="mt-1">{d}</p>
                 </li>

@@ -29,7 +29,7 @@ export function ChartFrame({
           {table && (
             <button
               onClick={() => setShowTable((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2.5 py-1 text-xs text-ink-2 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-series-1"
+              className="inline-flex items-center gap-1.5 rounded-control border border-line bg-surface-2 px-2.5 py-1 text-xs text-ink-2 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-series-1"
               aria-pressed={showTable}
             >
               {showTable ? <BarChart3 className="size-3.5" aria-hidden /> : <Table2 className="size-3.5" aria-hidden />}
@@ -100,7 +100,7 @@ export function ChartTooltip({
   if (!active || !payload?.length) return null;
   const v = Number(payload[0].value);
   return (
-    <div className="rounded-md border border-line bg-page/95 px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-control border border-line bg-page/95 px-3 py-2 text-xs shadow-lg">
       <p className="text-sm font-semibold text-ink tabular">{format(v)}</p>
       <p className="text-ink-2">{String(label ?? "")}</p>
     </div>
