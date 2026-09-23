@@ -3,8 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { ShapGlobal } from "@/lib/types";
 
-// Sequential single-hue ramp for feature value (low -> high), dark-surface steps.
-const RAMP = ["#184f95", "#256abf", "#3987e5", "#6da7ec", "#9ec5f4", "#cde2fb"];
+// Sequential single-hue blue ramp for feature value (low -> high), validated
+// on the white card surface. A different hue from the green categorical/
+// diverging colors used elsewhere on this page, so "feature value" doesn't
+// read as "supports/opposes".
+const RAMP = ["#1e3a8a", "#1d4ed8", "#3b82f6", "#60a5fa"];
 const colorFor = (t: number) => RAMP[Math.min(RAMP.length - 1, Math.max(0, Math.round(t * (RAMP.length - 1))))];
 
 const ROW = 30;
@@ -85,7 +88,7 @@ export function Beeswarm({ summary, top = 12 }: { summary: ShapGlobal["summary"]
       </svg>}
       {hover && (
         <div
-          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md border border-line bg-page px-2 py-1 text-[11px] shadow-lg"
+          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-control border border-line bg-page px-2 py-1 text-[11px] shadow-lg"
           style={{ left: hover.x, top: hover.y - 8 }}
         >
           <strong className="block text-ink tabular">{hover.value}</strong>

@@ -44,7 +44,7 @@ export function ContributionChart({
               onPointerLeave={() => setHover(null)}
               onFocus={() => setHover(i)}
               onBlur={() => setHover(null)}
-              className="grid grid-cols-[minmax(0,12rem)_1fr_4.5rem] items-center gap-3 rounded px-1 py-1 text-xs outline-none focus-visible:ring-2 focus-visible:ring-series-1 sm:grid-cols-[minmax(0,16rem)_1fr_5rem]"
+              className="grid grid-cols-[minmax(0,12rem)_1fr_4.5rem] items-center gap-3 rounded-control px-1 py-1 text-xs outline-none focus-visible:ring-2 focus-visible:ring-series-1 sm:grid-cols-[minmax(0,16rem)_1fr_5rem]"
               aria-label={`${it.label}: ${format(it.value)} (${pos ? "supports" : "opposes"})`}
             >
               <span className="truncate text-ink-2" title={it.label}>{it.label}</span>
@@ -61,7 +61,7 @@ export function ContributionChart({
                   }}
                 />
                 {hover === i && it.detail && (
-                  <span className="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-line bg-page px-2 py-1 text-[11px] text-ink-2 shadow-lg">
+                  <span className="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-control border border-line bg-page px-2 py-1 text-[11px] text-ink-2 shadow-lg">
                     <strong className="text-ink tabular">{format(it.value)}</strong> · {it.detail}
                   </span>
                 )}

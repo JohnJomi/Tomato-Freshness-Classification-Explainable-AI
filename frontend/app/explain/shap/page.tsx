@@ -49,17 +49,17 @@ function LocalWaterfall({ d }: { d: ShapLocal }) {
     >
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-2 text-sm tabular" aria-label="Base value plus contributions equals prediction">
-          <span className="rounded-md border border-line bg-surface-2 px-3 py-1.5">
+          <span className="rounded-control border border-line bg-surface-2 px-3 py-1.5">
             <span className="text-xs text-muted">Base prediction </span>
             <strong className="text-ink">{base.toFixed(3)}</strong>
           </span>
           <span className="text-muted">+</span>
-          <span className="rounded-md border border-line bg-surface-2 px-3 py-1.5">
+          <span className="rounded-control border border-line bg-surface-2 px-3 py-1.5">
             <span className="text-xs text-muted">Feature contributions </span>
             <strong className="text-ink">{(out - base >= 0 ? "+" : "") + (out - base).toFixed(3)}</strong>
           </span>
           <span className="text-muted">=</span>
-          <span className="rounded-md border border-line bg-surface-2 px-3 py-1.5">
+          <span className="rounded-control border border-line bg-surface-2 px-3 py-1.5">
             <span className="text-xs text-muted">Final prediction </span>
             <strong className="text-ink">{out.toFixed(3)}</strong>
           </span>
@@ -86,7 +86,7 @@ export default function ShapPage() {
       <section className="space-y-4" aria-labelledby="shap-global">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="space-y-2">
-            <h2 id="shap-global" className="text-lg font-semibold text-ink">Global view</h2>
+            <h2 id="shap-global" className="text-xl font-semibold text-ink">Global view</h2>
             {global.data && <ExplanationMeta model={global.data.model} scope="global" what={`Across all ${global.data.n_samples} held-out test samples`} />}
           </div>
           <Segmented label="Explained class" options={CLASS_ORDER} value={cls} onChange={setCls} />
@@ -121,7 +121,7 @@ export default function ShapPage() {
       <section className="space-y-4" aria-labelledby="shap-local">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="space-y-2">
-            <h2 id="shap-local" className="text-lg font-semibold text-ink">Individual explanation</h2>
+            <h2 id="shap-local" className="text-xl font-semibold text-ink">Individual explanation</h2>
             {local.data && (
               <ExplanationMeta
                 model={local.data.model}

@@ -114,7 +114,7 @@ export default function PredictPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {FEATURE_GROUPS.map((g) => (
-                <fieldset key={g.title} className="rounded-xl border border-line bg-surface p-4">
+                <fieldset key={g.title} className="rounded-card border border-line bg-surface p-4">
                   <legend className="px-1 text-sm font-semibold text-ink">{g.title}</legend>
                   <div className="space-y-2.5">
                     {g.features.map((f) => {
@@ -144,7 +144,7 @@ export default function PredictPage() {
               ))}
             </div>
 
-            <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface/95 p-3 backdrop-blur">
+            <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-3 rounded-card border border-line bg-surface/95 p-3 backdrop-blur">
               <Button type="submit" disabled={pending || invalid.length > 0}>
                 {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Sparkles className="size-4" aria-hidden />}
                 {pending ? "Analyzing tomato…" : "Predict freshness"}
@@ -159,7 +159,7 @@ export default function PredictPage() {
             {error && <ErrorState message={error} />}
             {result ? (
               <Card title="Prediction" subtitle={`Model: ${result.model}`}>
-                <div className="rounded-lg border border-line bg-surface-2 p-4 text-center">
+                <div className="rounded-control border border-line bg-surface-2 p-4 text-center">
                   <p className="text-xl font-semibold uppercase tracking-wide text-ink">{result.predicted_class}</p>
                   <p className="mt-1 text-sm text-ink-2 tabular">Confidence: {pct(result.confidence)}</p>
                   {actual && <p className="mt-1 text-xs text-muted">Actual class of this test sample: {actual}</p>}

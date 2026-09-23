@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 const base =
-  "rounded-md border border-line bg-surface-2 text-sm text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-series-1";
+  "rounded-control border border-line bg-surface-2 text-sm text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
 export function Button({
   variant = "primary",
@@ -12,10 +12,10 @@ export function Button({
     <button
       {...props}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-series-1",
+        "inline-flex items-center justify-center gap-2 rounded-control px-4 py-2 text-sm font-medium transition-[transform,background-color,border-color,box-shadow] duration-150 ease-out active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         variant === "primary"
-          ? "bg-ink text-page hover:bg-ink-2"
-          : "border border-line bg-surface-2 text-ink hover:bg-surface",
+          ? "bg-primary text-white shadow-[0_1px_2px_rgba(6,78,59,0.15)] hover:-translate-y-px hover:scale-[1.01] hover:bg-primary-dark"
+          : "border border-primary/30 bg-surface text-ink hover:-translate-y-px hover:scale-[1.01] hover:border-primary/50 hover:bg-primary-soft/40",
         className,
       )}
     />
@@ -50,7 +50,7 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="inline-flex flex-wrap rounded-md border border-line bg-surface-2 p-0.5">
+    <div role="radiogroup" aria-label={label} className="inline-flex flex-wrap rounded-control border border-line bg-surface-2 p-0.5">
       {options.map((o) => (
         <button
           key={o}
@@ -58,8 +58,8 @@ export function Segmented<T extends string>({
           aria-checked={o === value}
           onClick={() => onChange(o)}
           className={cn(
-            "rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-series-1",
-            o === value ? "bg-ink text-page" : "text-ink-2 hover:text-ink",
+            "rounded-control px-3 py-1.5 text-xs font-medium transition-colors duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+            o === value ? "bg-primary text-white" : "text-ink-2 hover:text-primary",
           )}
         >
           {o}
@@ -69,4 +69,7 @@ export function Segmented<T extends string>({
   );
 }
 
-export const inputClass = cn(base, "w-full px-2.5 py-1.5 tabular");
+export const inputClass = cn(
+  base,
+  "w-full px-2.5 py-1.5 tabular transition-colors duration-150 ease-out focus-visible:border-primary",
+);

@@ -10,18 +10,18 @@ export function Loading({ label = "Loading…" }: { label?: string }) {
 }
 
 export function Skeleton({ className = "h-24" }: { className?: string }) {
-  return <div className={`animate-pulse rounded-xl border border-line bg-surface ${className}`} aria-hidden />;
+  return <div className={`animate-pulse rounded-card border border-line bg-surface ${className}`} aria-hidden />;
 }
 
 export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
-    <div role="alert" className="flex flex-col items-start gap-3 rounded-xl border border-critical/40 bg-critical/10 p-4 text-sm">
+    <div role="alert" className="flex flex-col items-start gap-3 rounded-card border border-critical/40 bg-critical/10 p-4 text-sm">
       <div className="flex items-start gap-2 text-ink">
         <AlertTriangle className="mt-0.5 size-4 shrink-0 text-critical" aria-hidden />
         <span>{message}</span>
       </div>
       {onRetry && (
-        <button onClick={onRetry} className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-3 py-1.5 text-xs text-ink hover:bg-surface">
+        <button onClick={onRetry} className="inline-flex items-center gap-1.5 rounded-control border border-line bg-surface-2 px-3 py-1.5 text-xs text-ink hover:bg-surface">
           <RotateCw className="size-3.5" aria-hidden /> Retry
         </button>
       )}
@@ -30,5 +30,5 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
 }
 
 export function EmptyState({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-xl border border-dashed border-line p-8 text-center text-sm text-muted">{children}</div>;
+  return <div className="rounded-card border border-dashed border-line p-8 text-center text-sm text-muted">{children}</div>;
 }

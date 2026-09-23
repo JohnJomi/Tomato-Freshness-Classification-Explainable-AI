@@ -21,7 +21,24 @@ npm run dev                  # http://localhost:3000
 | `/dataset` | Sizes, target mapping, missing values, per-feature statistics |
 
 `NEXT_PUBLIC_API_URL` is inlined at build time, so rebuild after changing it.
-Charts use the validated reference data-viz palette (dark steps): one fixed
-colour per model, a single hue for single-series bars, a sequential blue for
-magnitude, and a red/blue diverging pair for contribution sign. Every chart has
-a table view.
+
+## Design
+
+Light, green-on-white analytics theme per `../design.md`. Colors, radii,
+typography (Inter) and hover/motion are themed centrally in `app/globals.css`
+and the shared primitives (`components/ui/Card.tsx`, `Controls.tsx`); no page
+structure changed for this pass. Chart colors are still checked against the
+dataviz skill's colorblind/contrast gates for the white card surface:
+
+- Categorical (model identity): green `--series-1`/`--series-2` + a neutral
+  slate `--series-3` — three same-hue greens fail the CVD-distinguishability
+  gate, so the third model uses ink-neutral instead of a third green.
+- Diverging (LIME/SHAP contribution sign): green `--pos` (supports) / red
+  `--neg` (opposes).
+- Sequential: a 4-step green ramp for confusion-matrix magnitude, and a
+  separate 4-step blue ramp for the SHAP beeswarm's feature-value encoding —
+  kept a different hue from the green diverging pair so "feature value" and
+  "supports/opposes" don't read as the same signal on the same SHAP page.
+
+Every chart still has a table view and value labels, so colour is never the
+only way information is conveyed.
