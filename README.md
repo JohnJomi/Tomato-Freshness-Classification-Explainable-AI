@@ -19,6 +19,7 @@ ml/outputs/figures/     generated plots
 ml/outputs/results/     generated metrics/reports
 ml/artifacts/           saved trained models + preprocessing artifacts (joblib/json)
 report/                 final written report
+frontend/               Next.js dashboard (App Router, TypeScript, Tailwind, Recharts)
 backend/                FastAPI service over the trained artifacts
   main.py               app, CORS, startup loading, error handling
   api/                  routers: dataset, models, predict, explanations
@@ -91,3 +92,28 @@ pipeline.
 `/predict` validates that exactly the 26 expected features are present and
 finite, and defaults to the CV-selected model. The explanation endpoints
 always use the CV-selected model and label each response `local` or `global`.
+
+## Run the frontend (Next.js)
+
+With the backend running:
+
+```bash
+cd frontend
+npm install
+cp .env.example .env.local   # edit NEXT_PUBLIC_API_URL if the backend isn't on :8000
+npm run dev                  # http://localhost:3000
+```
+
+Pages: Overview, Prediction Playground, Models, Features, LIME, SHAP, Dataset.
+See `frontend/README.md` for details. The UI only calls the API; no ML logic
+runs in TypeScript. If the backend is unreachable, pages show "Unable to
+connect to the ML service" with a retry button.
+
+### Quick start (all three steps)
+
+```bash
+source .venv/bin/activate
+python ml/run_pipeline.py                         # 1. train + save artifacts
+uvicorn backend.main:app --port 8000 &            # 2. API
+cd frontend && npm install && npm run dev         # 3. UI on :3000
+```
