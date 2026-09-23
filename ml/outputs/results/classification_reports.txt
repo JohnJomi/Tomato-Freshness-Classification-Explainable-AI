@@ -1,0 +1,60 @@
+======================================================================
+Random Forest
+======================================================================
+                  precision    recall  f1-score   support
+
+      Pure Fresh       1.00      1.00      1.00        14
+            Good       0.97      1.00      0.98        29
+Stale to Spoiled       1.00      0.99      0.99        68
+
+        accuracy                           0.99       111
+       macro avg       0.99      1.00      0.99       111
+    weighted avg       0.99      0.99      0.99       111
+
+
+Confusion matrix (rows=actual, cols=predicted):
+Class order: ['Pure Fresh', 'Good', 'Stale to Spoiled']
+[[14  0  0]
+ [ 0 29  0]
+ [ 0  1 67]]
+
+======================================================================
+SVM
+======================================================================
+                  precision    recall  f1-score   support
+
+      Pure Fresh       1.00      1.00      1.00        14
+            Good       0.94      1.00      0.97        29
+Stale to Spoiled       1.00      0.97      0.99        68
+
+        accuracy                           0.98       111
+       macro avg       0.98      0.99      0.98       111
+    weighted avg       0.98      0.98      0.98       111
+
+
+Confusion matrix (rows=actual, cols=predicted):
+Class order: ['Pure Fresh', 'Good', 'Stale to Spoiled']
+[[14  0  0]
+ [ 0 29  0]
+ [ 0  2 66]]
+
+======================================================================
+XGBoost
+======================================================================
+                  precision    recall  f1-score   support
+
+      Pure Fresh       1.00      1.00      1.00        14
+            Good       1.00      1.00      1.00        29
+Stale to Spoiled       1.00      1.00      1.00        68
+
+        accuracy                           1.00       111
+       macro avg       1.00      1.00      1.00       111
+    weighted avg       1.00      1.00      1.00       111
+
+
+Confusion matrix (rows=actual, cols=predicted):
+Class order: ['Pure Fresh', 'Good', 'Stale to Spoiled']
+[[14  0  0]
+ [ 0 29  0]
+ [ 0  0 68]]
+

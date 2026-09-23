@@ -1,0 +1,15 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Node (later frontend phases)
+node_modules/
+.next/
+
+# OS
+.DS_Store
+
+# Large/generated artifacts (kept regeneratable via run_pipeline.py)
+ml/artifacts/*.joblib
