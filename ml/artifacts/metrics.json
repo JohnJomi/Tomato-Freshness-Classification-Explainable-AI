@@ -1,0 +1,38 @@
+[
+  {
+    "Model": "Random Forest",
+    "Accuracy": 0.990990990990991,
+    "Precision": 0.9912912912912912,
+    "Recall": 0.990990990990991,
+    "F1-score": 0.9910339718249322,
+    "F1-macro": 0.9918811466834065,
+    "CV Accuracy Mean": 0.9887640449438202,
+    "CV Accuracy Std": 0.012308372078767766,
+    "CV F1-weighted Mean": 0.9889024965756942,
+    "CV F1-weighted Std": 0.012105384987543941
+  },
+  {
+    "Model": "SVM",
+    "Accuracy": 0.9819819819819819,
+    "Precision": 0.9831444347573379,
+    "Recall": 0.9819819819819819,
+    "F1-score": 0.9821478194612523,
+    "F1-macro": 0.9839137645107794,
+    "CV Accuracy Mean": 0.9752042900919307,
+    "CV Accuracy Std": 0.01936726368981284,
+    "CV F1-weighted Mean": 0.9750246792826598,
+    "CV F1-weighted Std": 0.019497944621395896
+  },
+  {
+    "Model": "XGBoost",
+    "Accuracy": 1.0,
+    "Precision": 1.0,
+    "Recall": 1.0,
+    "F1-score": 1.0,
+    "F1-macro": 1.0,
+    "CV Accuracy Mean": 0.986491317671093,
+    "CV Accuracy Std": 0.013098982085694483,
+    "CV F1-weighted Mean": 0.9864947048144768,
+    "CV F1-weighted Std": 0.013068536252748892
+  }
+]

@@ -1,0 +1,109 @@
+{
+  "model": "XGBoost",
+  "features": [
+    {
+      "feature": "MQ3_over_MQ2_end",
+      "importance": 0.16058878600597382
+    },
+    {
+      "feature": "MQ135_mean",
+      "importance": 0.1146799623966217
+    },
+    {
+      "feature": "MQ138_mean",
+      "importance": 0.10842850804328918
+    },
+    {
+      "feature": "MQ9_mean",
+      "importance": 0.07165241241455078
+    },
+    {
+      "feature": "MQ3_slope",
+      "importance": 0.05936439707875252
+    },
+    {
+      "feature": "Humidity_mean",
+      "importance": 0.05807251110672951
+    },
+    {
+      "feature": "MQ136_mean",
+      "importance": 0.05326062813401222
+    },
+    {
+      "feature": "MQ136_over_MQ138_end",
+      "importance": 0.04647712782025337
+    },
+    {
+      "feature": "MQ136_slope",
+      "importance": 0.043773964047431946
+    },
+    {
+      "feature": "MQ2_mean",
+      "importance": 0.03696072846651077
+    },
+    {
+      "feature": "MQ138_slope",
+      "importance": 0.03375459834933281
+    },
+    {
+      "feature": "MQ9_std",
+      "importance": 0.033281128853559494
+    },
+    {
+      "feature": "MQ2_std",
+      "importance": 0.03086126782000065
+    },
+    {
+      "feature": "MQ138_std",
+      "importance": 0.029170259833335876
+    },
+    {
+      "feature": "MQ3_mean",
+      "importance": 0.026156514883041382
+    },
+    {
+      "feature": "Temperature_mean",
+      "importance": 0.017898323014378548
+    },
+    {
+      "feature": "Temperature_slope",
+      "importance": 0.012969360686838627
+    },
+    {
+      "feature": "MQ136_std",
+      "importance": 0.009934249334037304
+    },
+    {
+      "feature": "MQ135_std",
+      "importance": 0.009907454252243042
+    },
+    {
+      "feature": "MQ9_slope",
+      "importance": 0.007801176980137825
+    },
+    {
+      "feature": "Humidity_slope",
+      "importance": 0.007784681860357523
+    },
+    {
+      "feature": "Temperature_std",
+      "importance": 0.0072786277160048485
+    },
+    {
+      "feature": "Humidity_std",
+      "importance": 0.0069686248898506165
+    },
+    {
+      "feature": "MQ3_std",
+      "importance": 0.006607226096093655
+    },
+    {
+      "feature": "MQ2_slope",
+      "importance": 0.0045081074349582195
+    },
+    {
+      "feature": "MQ135_slope",
+      "importance": 0.001859445357695222
+    }
+  ]
+}

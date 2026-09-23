@@ -1,0 +1,49 @@
+{
+  "samples": 555,
+  "features": [
+    "MQ2_mean",
+    "MQ2_std",
+    "MQ2_slope",
+    "MQ3_mean",
+    "MQ3_std",
+    "MQ3_slope",
+    "MQ9_mean",
+    "MQ9_std",
+    "MQ9_slope",
+    "MQ135_mean",
+    "MQ135_std",
+    "MQ135_slope",
+    "MQ136_mean",
+    "MQ136_std",
+    "MQ136_slope",
+    "MQ138_mean",
+    "MQ138_std",
+    "MQ138_slope",
+    "Temperature_mean",
+    "Temperature_std",
+    "Temperature_slope",
+    "Humidity_mean",
+    "Humidity_std",
+    "Humidity_slope",
+    "MQ3_over_MQ2_end",
+    "MQ136_over_MQ138_end"
+  ],
+  "n_features": 26,
+  "classes": [
+    "Pure Fresh",
+    "Good",
+    "Stale to Spoiled"
+  ],
+  "raw_distribution": {
+    "Spoiled": 216,
+    "Good": 144,
+    "Stale": 126,
+    "Pure Fresh": 69
+  },
+  "mapped_distribution": {
+    "Pure Fresh": 69,
+    "Good": 144,
+    "Stale to Spoiled": 342
+  },
+  "xai_model": "XGBoost"
+}
