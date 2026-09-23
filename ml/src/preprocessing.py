@@ -74,3 +74,13 @@ def make_preprocessor(scale: bool) -> Pipeline:
 def make_cv() -> StratifiedKFold:
     """Stratified 5-fold CV, shuffled, fixed random seed."""
     return StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=RANDOM_STATE)
+
+
+def encode_target(y: pd.Series) -> pd.Series:
+    """Encode the string target into integer codes 0/1/2 following CLASS_ORDER.
+
+    XGBoost requires integer class labels; using the same encoded target for
+    every model (not just XGBoost) keeps predictions/labels consistent across
+    the whole evaluation and avoids a per-model special case.
+    """
+    return y.astype(pd.CategoricalDtype(categories=CLASS_ORDER)).cat.codes
